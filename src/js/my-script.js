@@ -3,11 +3,13 @@ import { refs } from './refs';
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import LoadMoreBtnClass from './loadMoreBtnClass.js';
 
+const loadMoreEl = new LoadMoreBtnClass({ selector: '.load-more', isHidden: true });
 refs.searchFormEl.addEventListener('submit', onFormSubm);
-refs.loadMoreEl.addEventListener('click', loadMore);
+loadMoreEl.button.addEventListener('click', loadMore);
 refs.galleryEl.addEventListener('click', disableClickOnLink);
-window.addEventListener('scroll', handleScroll);
+// window.addEventListener('scroll', handleScroll);
 
 const lightbox = new SimpleLightbox('.gallery a');
 
@@ -24,7 +26,7 @@ function onFormSubm(event) {
         'Sorry, there are no images matching your search query. Please try again.'
       );
       refs.galleryEl.innerHTML = '';
-      refs.loadMoreEl.classList.add('is-hidden');
+      loadMoreEl.hide();
       return;
     }
     renderResult(prepareResult(data.hits));
@@ -35,26 +37,26 @@ function onFormSubm(event) {
     refs.forCheck = refs.question;
 
     refs.pixPage += 1;
-    refs.loadMoreEl.classList.remove('is-hidden');
+    loadMoreEl.show();
   });
 
   refs.searchFormEl.reset();
 }
 
 function loadMore() {
-  refs.loadMoreEl.classList.add('is-hidden');
+  loadMoreEl.hide();
 
   const resultQuestion = fetchTheReguest(refs.question);
-  resultQuestion.then(({ data, headers }) => {
+  resultQuestion.then(({ data }) => {
     if (refs.pixPage === 14) {
       Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
-      refs.loadMoreEl.classList.add('is-hidden');
+      loadMoreEl.hide();
       return;
     }
     addResult(prepareResult(data.hits));
   });
 
-  refs.loadMoreEl.classList.remove('is-hidden');
+  loadMoreEl.show();
   refs.pixPage += 1;
 }
 
@@ -111,11 +113,11 @@ function myScroll() {
   });
 }
 
-function handleScroll() {
-  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+// function handleScroll() {
+//   const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
 
-  // console.log(scrollTop, scrollHeight, clientHeight);
-  if (scrollTop + clientHeight >= scrollHeight - 5) {
-    loadMore();
-  }
-}
+//   // console.log(scrollTop, scrollHeight, clientHeight);
+//   if (scrollTop + clientHeight >= scrollHeight - 5) {
+//     loadMore();
+//   }
+// }
