@@ -22,6 +22,7 @@ function onFormSubm(event) {
   }
   const someResult = giveMeResult();
   someResult.then(resultArray => renderResult(prepareResult(resultArray)));
+
   refs.pixPage += 1;
   refs.searchFormEl.reset();
 }
@@ -57,7 +58,6 @@ async function loadMore() {
     loadMoreEl.hide();
 
     const { data } = await fetchTheReguest(refs.question);
-    console.log(data);
     // resultQuestion.then(({ data }) => {
     // if (refs.pixPage === 14) {
     //   Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
