@@ -7,6 +7,7 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 refs.searchFormEl.addEventListener('submit', onFormSubm);
 refs.loadMoreEl.addEventListener('click', loadMore);
 refs.galleryEl.addEventListener('click', disableClickOnLink);
+window.addEventListener('scroll', handleScroll);
 
 const lightbox = new SimpleLightbox('.gallery a');
 
@@ -108,4 +109,13 @@ function myScroll() {
     top: cardHeight * 2,
     behavior: 'smooth',
   });
+}
+
+function handleScroll() {
+  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+  // console.log(scrollTop, scrollHeight, clientHeight);
+  if (scrollTop + clientHeight >= scrollHeight - 5) {
+    loadMore();
+  }
 }
