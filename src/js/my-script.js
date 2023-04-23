@@ -5,9 +5,9 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import LoadMoreBtnClass from './loadMoreBtnClass.js';
 
-const loadMoreEl = new LoadMoreBtnClass({ selector: '.load-more', isHidden: true });
+// const loadMoreEl = new LoadMoreBtnClass({ selector: '.load-more', isHidden: true });
 refs.searchFormEl.addEventListener('submit', onFormSubm);
-loadMoreEl.button.addEventListener('click', loadMore);
+// loadMoreEl.button.addEventListener('click', loadMore);
 refs.galleryEl.addEventListener('click', disableClickOnLink);
 window.addEventListener('scroll', handleScroll);
 
@@ -61,11 +61,11 @@ async function loadMore() {
 
     if (refs.pixPage === 14) {
       Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
-      loadMoreEl.hide();
+      // loadMoreEl.hide();
       return;
     }
     addResult(prepareResult(data.hits));
-    loadMoreEl.show();
+    // loadMoreEl.show();
     refs.pixPage += 1;
   } catch (error) {
     console.log(error);
@@ -75,13 +75,13 @@ async function loadMore() {
 
 async function loadMoreFromScroll() {
   try {
-    loadMoreEl.hide();
+    // loadMoreEl.hide();
 
     const { data } = await fetchTheReguest(refs.question);
 
     if (refs.pixPage === 14) {
       Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
-      loadMoreEl.hide();
+      // loadMoreEl.hide();
       return;
     }
     addResult(prepareResult(data.hits));
