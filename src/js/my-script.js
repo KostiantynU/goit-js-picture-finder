@@ -45,7 +45,7 @@ async function giveMeResult() {
     }
     refs.forCheck = refs.question;
     refs.pixPage += 1;
-    loadMoreEl.show();
+    // loadMoreEl.show();
     return data.hits;
   } catch (error) {
     console.log(error);
