@@ -58,13 +58,7 @@ async function loadMore() {
     loadMoreEl.hide();
 
     const { data } = await fetchTheReguest(refs.question);
-    // resultQuestion.then(({ data }) => {
-    // if (refs.pixPage === 14) {
-    //   Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
-    //   loadMoreEl.hide();
-    //   return;
-    // }
-    // });
+
     if (refs.pixPage === 14) {
       Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
       loadMoreEl.hide();
@@ -72,6 +66,26 @@ async function loadMore() {
     }
     addResult(prepareResult(data.hits));
     loadMoreEl.show();
+    refs.pixPage += 1;
+  } catch (error) {
+    console.log(error);
+    Notiflix.Notify.failure('Something going wrong, look at console for details');
+  }
+}
+
+async function loadMoreFromScroll() {
+  try {
+    loadMoreEl.hide();
+
+    const { data } = await fetchTheReguest(refs.question);
+
+    if (refs.pixPage === 14) {
+      Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
+      loadMoreEl.hide();
+      return;
+    }
+    addResult(prepareResult(data.hits));
+
     refs.pixPage += 1;
   } catch (error) {
     console.log(error);
@@ -137,6 +151,6 @@ function handleScroll() {
 
   // console.log(scrollTop, scrollHeight, clientHeight);
   if (scrollTop + clientHeight >= scrollHeight - 5) {
-    loadMore();
+    loadMoreFromScroll();
   }
 }
