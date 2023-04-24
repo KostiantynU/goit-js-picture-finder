@@ -35,7 +35,7 @@ async function giveMeResult() {
         'Sorry, there are no images matching your search query. Please try again.'
       );
       refs.galleryEl.innerHTML = '';
-      loadMoreEl.hide();
+      // loadMoreEl.hide();
       refs.pixPage = 1;
       return;
     }
@@ -55,7 +55,7 @@ async function giveMeResult() {
 
 async function loadMore() {
   try {
-    loadMoreEl.hide();
+    // loadMoreEl.hide();
 
     const { data } = await fetchTheReguest(refs.question);
 
