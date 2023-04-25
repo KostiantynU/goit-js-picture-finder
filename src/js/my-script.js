@@ -19,6 +19,7 @@ function greeting() {
   refs.galleryEl.innerHTML =
     '<h1 class="greeting-title">Hello! This is service for search pictures! Type your question at the top of page!';
   refs.title = document.querySelector('.greeting-title');
+  refs.isTitleTrue = true;
   setInterval(() => {
     refs.title.classList.add('greeting-title-shown');
   }, 1000);
@@ -139,6 +140,9 @@ function renderResult(markup) {
 }
 
 function addResult(markup) {
+  if (refs.isTitleTrue) {
+    refs.title.remove();
+  }
   refs.galleryEl.insertAdjacentHTML('beforeend', markup);
   lightbox.refresh();
   myScroll();
