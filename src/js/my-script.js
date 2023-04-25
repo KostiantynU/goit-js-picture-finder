@@ -3,7 +3,8 @@ import { refs } from './refs';
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import LoadMoreBtnClass from './loadMoreBtnClass.js';
+// import LoadMoreBtnClass from './loadMoreBtnClass.js';
+import { AsyncFetch } from './fetch';
 
 // const loadMoreEl = new LoadMoreBtnClass({ selector: '.load-more', isHidden: true });
 refs.searchFormEl.addEventListener('submit', onFormSubm);
@@ -11,40 +12,54 @@ refs.searchFormEl.addEventListener('submit', onFormSubm);
 refs.galleryEl.addEventListener('click', disableClickOnLink);
 window.addEventListener('scroll', handleScroll);
 
+const asyncRequest = new AsyncFetch({});
 const lightbox = new SimpleLightbox('.gallery a');
+
+function greeting() {
+  refs.galleryEl.innerHTML =
+    '<h1 class="greeting-title">Hello! This is service for search pictures! Type your question at the top of page!';
+  refs.title = document.querySelector('.greeting-title');
+  setInterval(() => {
+    refs.title.classList.add('greeting-title-shown');
+  }, 1000);
+  setInterval(() => {
+    refs.title.classList.remove('greeting-title-shown');
+  }, 2000);
+}
+greeting();
 
 function onFormSubm(event) {
   event.preventDefault();
 
-  refs.question = event.currentTarget.searchQuery.value.trim();
-  if (refs.question !== refs.forCheck) {
-    refs.pixPage = 1;
+  asyncRequest.question = event.currentTarget.searchQuery.value.trim();
+  if (asyncRequest.question !== asyncRequest.forCheck) {
+    asyncRequest.resetPage();
   }
   const someResult = giveMeResult();
   someResult.then(resultArray => renderResult(prepareResult(resultArray)));
 
-  refs.pixPage += 1;
+  asyncRequest.incrementPage();
   refs.searchFormEl.reset();
 }
 
 async function giveMeResult() {
   try {
-    const { data } = await fetchTheReguest(refs.question);
+    const { data } = await asyncRequest.fetchTheReguest(asyncRequest.question);
     if (data.hits.length === 0) {
       Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
       refs.galleryEl.innerHTML = '';
       // loadMoreEl.hide();
-      refs.pixPage = 1;
+      asyncRequest.resetPage();
       return;
     }
 
-    if (refs.question !== refs.forCheck) {
+    if (asyncRequest.question !== asyncRequest.forCheck) {
       Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
     }
-    refs.forCheck = refs.question;
-    refs.pixPage += 1;
+    asyncRequest.forCheck = asyncRequest.question;
+    asyncRequest.incrementPage();
     // loadMoreEl.show();
     return data.hits;
   } catch (error) {
@@ -53,40 +68,40 @@ async function giveMeResult() {
   }
 }
 
-async function loadMore() {
-  try {
-    // loadMoreEl.hide();
+// async function loadMore() {
+//   try {
+//     // loadMoreEl.hide();
 
-    const { data } = await fetchTheReguest(refs.question);
-
-    if (refs.pixPage === 14) {
-      Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
-      // loadMoreEl.hide();
-      return;
-    }
-    addResult(prepareResult(data.hits));
-    // loadMoreEl.show();
-    refs.pixPage += 1;
-  } catch (error) {
-    console.log(error);
-    Notiflix.Notify.failure('Something going wrong, look at console for details');
-  }
-}
+//     const { data } = await asyncRequest.fetchTheReguest(asyncRequest.question);
+//     console.log(data);
+//     if (asyncRequest.pixPage === 14) {
+//       Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
+//       // loadMoreEl.hide();
+//       return;
+//     }
+//     addResult(prepareResult(data.hits));
+//     // loadMoreEl.show();
+//     asyncRequest.incrementPage();
+//   } catch (error) {
+//     console.log(error);
+//     Notiflix.Notify.failure('Something going wrong, look at console for details');
+//   }
+// }
 
 async function loadMoreFromScroll() {
   try {
     // loadMoreEl.hide();
 
-    const { data } = await fetchTheReguest(refs.question);
+    const { data } = await asyncRequest.fetchTheReguest(asyncRequest.question);
 
-    if (refs.pixPage === 14) {
+    if (data.totalHits / (data.hits.length * asyncRequest.pixPage) <= 1) {
       Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
       // loadMoreEl.hide();
       return;
     }
     addResult(prepareResult(data.hits));
 
-    refs.pixPage += 1;
+    asyncRequest.incrementPage();
   } catch (error) {
     console.log(error);
     Notiflix.Notify.failure('Something going wrong, look at console for details');
@@ -121,7 +136,6 @@ function prepareResult(resultArray) {
 function renderResult(markup) {
   refs.galleryEl.innerHTML = markup;
   lightbox.refresh();
-  myScroll();
 }
 
 function addResult(markup) {
