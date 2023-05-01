@@ -15,19 +15,25 @@ window.addEventListener('scroll', handleScroll);
 const asyncRequest = new AsyncFetch({});
 const lightbox = new SimpleLightbox('.gallery a');
 
+let firstPartAnim;
+let secondPartAnim;
 function greeting() {
   refs.galleryEl.innerHTML =
     '<h1 class="greeting-title">Hello! This is service for search pictures! Type your question at the top of page!';
   refs.title = document.querySelector('.greeting-title');
   refs.isTitleTrue = true;
-  setInterval(() => {
+  firstPartAnim = setInterval(() => {
     refs.title.classList.add('greeting-title-shown');
   }, 1000);
-  setInterval(() => {
+  secondPartAnim = setInterval(() => {
     refs.title.classList.remove('greeting-title-shown');
   }, 2000);
 }
 greeting();
+setTimeout(() => {
+  clearInterval(firstPartAnim);
+  clearInterval(secondPartAnim);
+}, 6000);
 
 function onFormSubm(event) {
   event.preventDefault();
